@@ -26,6 +26,7 @@ public class Main {
 			//Searcher srch = new Searcher(idxer.analyzer,idxer.index);
 			Searcher srch = new Searcher(idxer.analyzer,idxer.index);
 			qrz.createQueryVector();
+			srch.initializeWriters();
 			for(int i=0;i<20;i++)
 			{
 				String q = qrz.queries.elementAt(i).text;
@@ -35,6 +36,7 @@ public class Main {
 				srch.searchQueryBM25(q,id);
 				srch.searchQueryBoolean(q,id);
 			}
+			srch.closeWriters();
 			//System.out.println(dmz.docs.size());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

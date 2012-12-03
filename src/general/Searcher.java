@@ -1,5 +1,8 @@
 package general;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -31,6 +34,7 @@ public class Searcher {
 	private IndexReader reader;
 	private IndexSearcher searcher;
 	private TopScoreDocCollector collector;
+	private BufferedWriter bmWriter,vsmWriter,booleanWriter;
 	
 	public Searcher(StandardAnalyzer analyzer,Directory index) throws IOException
 	{
@@ -48,7 +52,7 @@ public class Searcher {
 	    searcher.search(q, collector);
 	    ScoreDoc[] hits = collector.topDocs().scoreDocs;
 	    System.out.println("\nVector Space Results");
-	    printResults(hits,querystr,id);
+	    printResults(hits,querystr,id,vsmWriter);
 	}
 	
 	public void searchQueryBM25(String querystr,int id) throws ParseException, IOException
@@ -61,7 +65,7 @@ public class Searcher {
 	    searcher.search(q, collector);
 	    ScoreDoc[] hits = collector.topDocs().scoreDocs;
 	    System.out.println("\nOKAPI BM25 Results");
-	    printResults(hits,querystr,id);
+	    printResults(hits,querystr,id,bmWriter);
 	}
 	
 	public void searchQueryBoolean(String querystr,int id) throws ParseException, IOException
@@ -115,6 +119,7 @@ public class Searcher {
 	    		int docId = hits[i][j].doc;
 	    		Document d = searcher.doc(docId);
 	    		System.out.println(id + " " + d.get("id"));
+	    		booleanWriter.append(id + " " + d.get("id")+"\n");
 	    		k++;
 	    		if(k==20)
 	    			return;
@@ -122,13 +127,28 @@ public class Searcher {
 	    }
 	}
 
-	public void printResults(ScoreDoc[] hits,String q,int id) throws IOException
+	public void printResults(ScoreDoc[] hits,String q,int id,BufferedWriter writer) throws IOException
 	{
 		System.out.println("Found " + hits.length + " hits");
 	    for(int i=0;i<hits.length;++i) {
 	    	int docId = hits[i].doc;
 	    	Document d = searcher.doc(docId);
 	    	System.out.println(id + " " + d.get("id"));
+	    	writer.append(id + " " + d.get("id")+"\n");
 	    }
+	}
+	
+	public void initializeWriters() throws IOException
+	{
+		bmWriter = new BufferedWriter(new FileWriter(new File("bm_output.txt")));
+		vsmWriter = new BufferedWriter(new FileWriter(new File("vsm_output.txt")));
+		booleanWriter = new BufferedWriter(new FileWriter(new File("boolean_output.txt")));
+	}
+	
+	public void closeWriters() throws IOException
+	{
+		bmWriter.close();
+		vsmWriter.close();
+		booleanWriter.close();
 	}
 }
