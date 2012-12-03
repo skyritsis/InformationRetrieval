@@ -31,7 +31,6 @@ public class Documenizer {
 				temp = new Mydoc();
 				strb.setLength(0);
 				temp.id = line.substring(3);
-				//System.out.println("Text ID :"+temp.id+" "+temp.id.length());
 				line = br.readLine();
 //				if(!temp.id.equalsIgnoreCase("1") && Integer.parseInt(previous)!=Integer.parseInt(temp.id)-1)
 //					System.out.println("Wrong Parse at "+temp.id);
